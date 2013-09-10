@@ -21,5 +21,11 @@ def pattern_stats(file_IN):
 	### remove column of NaNs
 	del data['Unnamed: 8']
 
-	
+stage1 = data[data['measure'] == 'total_accuracy']
+stage1.head
+stage1.head()
+stage2 = stage1[stage1['mask'] == 'VAC']
+stage2
+stage2.head()
+stage2.head(35)	
 	
