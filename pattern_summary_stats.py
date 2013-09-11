@@ -1,7 +1,7 @@
 #def pattern_stats(file_IN):
 
 ### this is script that i'll use as a pandas exercise .  it takes one of the text files that the matlab  ### create pivot files creates as input and then will create all the standard plots we need.  BOLD time 
-### series by ROI (also by trial type?), accuracy time series by ROIs, bar plots of mean delay BOLD by ### rois, bar plots of mean accuracy in the delay period by ROI,  distintiveness time series and bar 
+### series by ROI (also by trial type?), accuracy time series by ROIs, bar plots of mean delay BOLD by ### rois, bar plots of mean accuracy in the delay period by ROI,  distinctiveness time series and bar 
 ### plots by ROI, then comparisons of all the above amongst span and drug groups
 
 file_IN = 'Dopamine_pattern_scheme3_resultsX_concise_logreg_bp_mr_pfc_pen10K.txt'
@@ -13,27 +13,26 @@ import time
 import matplotlib.pyplot as plt
 import os
 
+
 ## make sure we have space to save
 directory, dummy = os.path.split(os.path.realpath(file_IN))
 if not os.path.exists(directory + '/figures/'):
 	os.mkdir(directory + '/figures/')
 	os.mkdir(directory + '/figures/accuracy')
 	os.mkdir(directory + '/figures/BOLD')
-	os.mkdir(directory + '/figures/distintiveness')
-	os.chdir(directory + '/figures/')
-
-
+	os.mkdir(directory + '/figures/distinctiveness')
+	
 ### read in data
 data = pd.read_table(file_IN, sep='\t')
 
 ### parse name and report
 metadata = file_IN.rsplit('_')
-the_pen = metadata[-1]; last = the_pen.split('.')[0]; the_pen = last[0]
+the_pen = metadata[-1]; last = the_pen.split('.')[0]; the_pen = last
 dataset = metadata[0]; scheme = metadata[2];
 classifier_method = metadata[5]; filter_type = metadata[6]
 
-print '-{0}- data set using -{1}- and the -{2}- classifier, -{3}- filtering \
-	and penalty -{4}-.'.format(dataset, scheme,classifier_method,filter_type,last)
+print '-{0}- data set using -{1}- and the -{2}- classifier, -{3}- filtering,' \
+'and penalty -{4}-.'.format(dataset, scheme, classifier_method, filter_type, the_pen)
 	#metadata[0],metadata[2],metadata[5],metadata[6],last)
 
 ### remove column of NaNs
@@ -49,6 +48,8 @@ metrics = list(metrics)
 ## to do this, we select out the measure we want (total_accuracy) then
 ## select the ROI we want, then do something else 
 #stage1 = data[data['measure'] == 'total_BOLD']
+
+os.chdir(directory + '/figures/')
 
 for metric in metrics:
 	
@@ -89,7 +90,24 @@ for metric in metrics:
 	time.sleep(3)
 	
 	## save
-
+	plot_name = classifier_method + '_' + filter_type + '_' + metric + '_line.png'
+	plt.savefig(plot_name)
 	plt.close('all')
+
+
+# moves to appropriate folder
+import shutil
+import glob
+
+bold_files = glob.glob('*BOLD*png')
+acc_files = glob.glob('*acc*png')
+dist_files = glob.glob('*dist*png')
+
+for file in bold_files: 
+	shutil.move(file,'BOLD/'+file)
+for file in acc_files: 
+	shutil.move(file,'accuracy/'+file)
+for file in bold_files: 
+	shutil.move(file,'distinctiveness/'+file)	
 
 	
